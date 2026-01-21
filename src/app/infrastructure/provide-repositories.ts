@@ -1,9 +1,10 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { CONTRACT_REPO, EMPLOYEE_REPO, PAYROLL_RULE_REPO, PAYROLL_RUN_REPO } from './tokens';
+import { CONTRACT_REPO, EMPLOYEE_REPO, PAYROLL_RULE_REPO, PAYROLL_RUN_REPO, AUTH_REPO } from './tokens';
 import { HttpEmployeeRepository } from './http/employee.http.repository';
 import { HttpContractRepository } from './http/contract.http.repository';
 import { HttpPayrollRunRepository } from './http/payroll-run.http.repository';
 import { HttpPayrollRuleRepository } from './http/payroll-rule.http.repository';
+import { AuthHttpRepository } from './http/auth-http.repository';
 
 export function provideRepositories(): EnvironmentProviders {
   return makeEnvironmentProviders([
@@ -11,5 +12,6 @@ export function provideRepositories(): EnvironmentProviders {
     { provide: CONTRACT_REPO, useClass: HttpContractRepository },
     { provide: PAYROLL_RUN_REPO, useClass: HttpPayrollRunRepository },
     { provide: PAYROLL_RULE_REPO, useClass: HttpPayrollRuleRepository },
+    { provide: AUTH_REPO, useClass: AuthHttpRepository },
   ]);
 }
