@@ -13,11 +13,11 @@ import { CreateEmployeeUseCase } from '../../application/employees/create-employ
   template: `
   <div class="row">
     <div class="col card">
-      <h2>Crear empleado</h2>
+      <h2>Crear Empleado</h2>
       <form [formGroup]="form" (ngSubmit)="create()">
         <label for="name">Nombre</label>
         <input id="name" formControlName="name" placeholder="Ej: Ana Pérez">
-        <label for="email">Email</label>
+        <label for="email">Correo Electrónico</label>
         <input id="email" formControlName="email" placeholder="ana@empresa.com">
 
         <div class="actions">
@@ -32,7 +32,7 @@ import { CreateEmployeeUseCase } from '../../application/employees/create-employ
     <div class="col card">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
         <h2>Empleados</h2>
-        <button type="button" (click)="load()">Refrescar</button>
+        <button type="button" class="btn-secondary" (click)="load()">Actualizar</button>
       </div>
 
       <ng-container *ngIf="employees().length; else empty">
@@ -41,9 +41,9 @@ import { CreateEmployeeUseCase } from '../../application/employees/create-employ
             <thead>
               <tr>
                 <th>Nombre</th>
-                <th>Email</th>
-                <th>Id</th>
-                <th>Creado</th>
+                <th>Correo Electrónico</th>
+                <th>ID</th>
+                <th>Fecha de Creación</th>
               </tr>
             </thead>
             <tbody>

@@ -8,16 +8,16 @@ import { CheckHealthUseCase } from '../../application/health/check-health.usecas
   imports: [NgIf],
   template: `
     <div class="card">
-      <h2>Health</h2>
+      <h2>Estado del Servicio</h2>
       <div class="small">GET /payroll/health</div>
 
       <div class="actions">
-        <button type="button" (click)="check()">Probar</button>
+        <button type="button" (click)="check()">Verificar Estado</button>
       </div>
 
       <div *ngIf="status() as s" style="margin-top:10px;">
         <span class="pill" [class.ok]="s === 'ok'" [class.bad]="s !== 'ok'">
-          status: {{ s }}
+          Estado: {{ s === 'ok' ? 'Operativo' : s }}
         </span>
       </div>
 

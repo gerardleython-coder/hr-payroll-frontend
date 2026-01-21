@@ -17,7 +17,7 @@ import { CreateContractUseCase } from '../../application/contracts/create-contra
   template: `
   <div class="row">
     <div class="col card">
-      <h2>Crear contrato</h2>
+      <h2>Crear Contrato</h2>
 
       <form [formGroup]="form" (ngSubmit)="create()">
         <label for="employeeId">Empleado</label>
@@ -26,13 +26,13 @@ import { CreateContractUseCase } from '../../application/contracts/create-contra
           <option *ngFor="let e of employees()" [value]="e.id">{{ e.name }} ({{ e.email }})</option>
         </select>
 
-        <label for="contractType">Tipo de contrato</label>
+        <label for="contractType">Tipo de Contrato</label>
         <select id="contractType" formControlName="contractType">
-          <option value="EMPLOYEE">EMPLOYEE</option>
-          <option value="CONTRACTOR">CONTRACTOR</option>
+          <option value="EMPLOYEE">EMPLEADO</option>
+          <option value="CONTRACTOR">CONTRATISTA</option>
         </select>
 
-        <label for="baseSalary">Salario base</label>
+        <label for="baseSalary">Salario Base</label>
         <input id="baseSalary" type="number" formControlName="baseSalary" placeholder="Ej: 3000000">
 
         <label style="display:flex; align-items:center; gap:10px; margin-top:12px;">
@@ -52,7 +52,7 @@ import { CreateContractUseCase } from '../../application/contracts/create-contra
     <div class="col card">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
         <h2>Contratos</h2>
-        <button type="button" (click)="load()">Refrescar</button>
+        <button type="button" class="btn-secondary" (click)="load()">Actualizar</button>
       </div>
 
       <ng-container *ngIf="contracts().length; else empty">
@@ -63,9 +63,9 @@ import { CreateContractUseCase } from '../../application/contracts/create-contra
                 <th>Empleado</th>
                 <th>Tipo</th>
                 <th>Salario</th>
-                <th>Activo</th>
-                <th>Id</th>
-                <th>Creado</th>
+                <th>Estado</th>
+                <th>ID</th>
+                <th>Fecha de Creación</th>
               </tr>
             </thead>
             <tbody>
@@ -73,11 +73,11 @@ import { CreateContractUseCase } from '../../application/contracts/create-contra
                 <td>
                   <span class="small wrap-anywhere">{{ employeeName(c.employeeId) }}</span>
                 </td>
-                <td><span class="pill">{{ c.contractType }}</span></td>
+                <td><span class="pill">{{ c.contractType === 'EMPLOYEE' ? 'EMPLEADO' : 'CONTRATISTA' }}</span></td>
                 <td>{{ c.baseSalary | number }}</td>
                 <td>
                   <span class="pill" [class.ok]="c.active" [class.bad]="!c.active">
-                    {{ c.active ? 'Sí' : 'No' }}
+                    {{ c.active ? 'Activo' : 'Inactivo' }}
                   </span>
                 </td>
                 <td><span class="small mono wrap-anywhere">{{ c.id }}</span></td>
