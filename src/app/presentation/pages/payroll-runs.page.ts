@@ -11,6 +11,7 @@ import { ListEmployeesUseCase } from '../../application/employees/list-employees
 import { ListContractsUseCase } from '../../application/contracts/list-contracts.usecase';
 import { CreatePayrollRunUseCase } from '../../application/payroll/create-payroll-run.usecase';
 import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-runs.usecase';
+import { DownloadPayrollPdfUseCase } from '../../application/payroll/download-payroll-pdf.usecase';
 
 @Component({
   standalone: true,
@@ -100,6 +101,7 @@ import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-r
                 <th>Salario Neto</th>
                 <th>Fecha de Creación</th>
                 <th>Desglose</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -117,6 +119,16 @@ import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-r
                     <summary class="small">ver</summary>
                     <pre class="pre-wrap">{{ formatBreakdown(r.breakdown) }}</pre>
                   </details>
+                </td>
+                <td>
+                  <button 
+                    type="button" 
+                    class="btn-secondary" 
+                    (click)="downloadPdf(r)" 
+                    [disabled]="downloadingId() === r.id"
+                    style="padding: 6px 12px; font-size: 12px;">
+                    {{ downloadingId() === r.id ? 'Descargando...' : 'Descargar PDF' }}
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -139,6 +151,7 @@ export class PayrollRunsPage implements OnInit {
 
   error = signal<string | null>(null);
   busy = signal(false);
+  downloadingId = signal<string | null>(null);
 
   filters = signal<{ employeeId?: string; period?: string }>({});
 
@@ -149,6 +162,7 @@ export class PayrollRunsPage implements OnInit {
   private readonly listContracts = inject(ListContractsUseCase);
   private readonly createRunUc = inject(CreatePayrollRunUseCase);
   private readonly listRunsUc = inject(ListPayrollRunsUseCase);
+  private readonly downloadPdfUc = inject(DownloadPayrollPdfUseCase);
 
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group({
@@ -250,5 +264,38 @@ export class PayrollRunsPage implements OnInit {
     }
 
     return JSON.stringify(translated, null, 2);
+  }
+
+  downloadPdf(run: PayrollRun): void {
+    this.downloadingId.set(run.id);
+    this.error.set(null);
+
+    this.downloadPdfUc.execute(run.id).subscribe({
+      next: (blob) => {
+        // Crear un enlace temporal para descargar el archivo
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        // Generar nombre de archivo descriptivo
+        const employeeName = run.employee?.name || 'empleado';
+        const sanitizedName = employeeName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+        link.download = `nomina-${run.period}-${sanitizedName}.pdf`;
+        
+        // Simular click para descargar
+        document.body.appendChild(link);
+        link.click();
+        
+        // Limpiar
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        this.downloadingId.set(null);
+      },
+      error: (e) => {
+        this.downloadingId.set(null);
+        this.error.set(`Error al descargar PDF: ${String(e?.message ?? e)}`);
+      },
+    });
   }
 }
