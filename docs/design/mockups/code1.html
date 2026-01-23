@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Employee Directory Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5a4ea6",
+                        "background-light": "#f8f8fc",
+                        "background-dark": "#191f2e",
+                        "table-hover": "#242938",
+                        "border-muted": "#3b4254"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            background-color: rgba(25, 31, 46, 0.8);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #191f2e;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #3b4254;
+            border-radius: 10px;
+        }
+        .status-active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .status-inactive {
+            background-color: rgba(156, 163, 175, 0.1);
+            color: #9ca3af;
+            border: 1px solid rgba(156, 163, 175, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Sticky Top Navbar -->
+<header class="sticky top-0 z-50 glass-nav border-b border-border-muted px-6 py-3">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-xl">account_tree</span>
+</div>
+<h1 class="font-bold text-lg tracking-tight hidden md:block">HR Sync Pro</h1>
+</div>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-white font-semibold text-sm border-b-2 border-primary pb-1" href="#">Employees</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-medium" href="#">Contracts</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-medium" href="#">Payroll Runs</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-medium" href="#">Rules</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
+<input class="bg-[#242938] border-none rounded-lg pl-9 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-primary" placeholder="Quick search..." type="text"/>
+</div>
+<div class="h-8 w-[1px] bg-border-muted mx-2"></div>
+<button class="flex items-center gap-2 group">
+<div class="size-8 rounded-full bg-slate-700 overflow-hidden border border-border-muted" data-alt="User profile avatar">
+<img alt="Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY2f0lmfptSWeJTf0Pv0kuJj5C5LADdM3C-w9bmpuPFwuXQjYaeS9oFP1kuNf3vmGVSIAKa-SExmiQV16RUpBfhGANtCywmxECLXHMs7LjVPvvdKtVz9DefYN4UxGXsS9B3EQcSzGgZEb80xTKDYd-wwraTgbfWmIEAFLQBJIrs0Dp5rCG0rLWcO9FTSf3TYZH9uuj_RhW-G_jt8eAjsutDaoGXYM1i5fWuc8qqj9Z9jpuLkR0zD2bMSmdVyhgnaooVQIpJ5JeD6W2"/>
+</div>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-white transition-colors">logout</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-6 py-8">
+<!-- Page Heading & Stats Grid -->
+<div class="flex flex-col gap-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl font-black tracking-tight text-white mb-2">Employee Directory</h2>
+<p class="text-slate-400 text-sm">Manage your organization's workforce and payroll configuration.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-[#2e2d34] hover:bg-[#3a3a42] text-white rounded-lg font-semibold text-sm transition-all border border-border-muted">
+<span class="material-symbols-outlined text-lg">file_download</span>
+                        Export
+                    </button>
+<button class="flex items-center gap-2 px-5 py-2 bg-primary hover:bg-opacity-90 text-white rounded-lg font-bold text-sm shadow-lg shadow-primary/20 transition-all">
+<span class="material-symbols-outlined text-lg">person_add</span>
+                        Create Employee
+                    </button>
+</div>
+</div>
+<!-- Bento Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-[#1f2535] border border-border-muted p-5 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary">groups</span>
+</div>
+<span class="text-emerald-400 text-xs font-bold bg-emerald-400/10 px-2 py-0.5 rounded-full">+12%</span>
+</div>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Total Employees</p>
+<p class="text-2xl font-bold text-white">1,248</p>
+</div>
+<div class="bg-[#1f2535] border border-border-muted p-5 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-400/10 rounded-lg">
+<span class="material-symbols-outlined text-blue-400">description</span>
+</div>
+<span class="text-emerald-400 text-xs font-bold bg-emerald-400/10 px-2 py-0.5 rounded-full">+5%</span>
+</div>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Active Contracts</p>
+<p class="text-2xl font-bold text-white">1,192</p>
+</div>
+<div class="bg-[#1f2535] border border-border-muted p-5 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-amber-400/10 rounded-lg">
+<span class="material-symbols-outlined text-amber-400">pending_actions</span>
+</div>
+<span class="text-slate-400 text-xs font-bold bg-slate-400/10 px-2 py-0.5 rounded-full">Stable</span>
+</div>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Pending Payrolls</p>
+<p class="text-2xl font-bold text-white">48</p>
+</div>
+<div class="bg-[#1f2535] border border-border-muted p-5 rounded-xl">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-purple-400/10 rounded-lg">
+<span class="material-symbols-outlined text-purple-400">rule</span>
+</div>
+<span class="text-emerald-400 text-xs font-bold bg-emerald-400/10 px-2 py-0.5 rounded-full">+2%</span>
+</div>
+<p class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Active Rules</p>
+<p class="text-2xl font-bold text-white">156</p>
+</div>
+</div>
+<!-- Table Section -->
+<div class="bg-[#1a1f2e] border border-border-muted rounded-xl overflow-hidden">
+<!-- Search & Filters -->
+<div class="p-4 border-b border-border-muted flex flex-col md:flex-row gap-4 items-center justify-between bg-[#1e2433]">
+<div class="relative w-full md:w-96">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg">filter_list</span>
+<input class="w-full bg-background-dark border border-border-muted rounded-lg pl-10 pr-4 py-2 text-sm text-white focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-slate-500" placeholder="Search by name, email, or employee ID..." type="text"/>
+</div>
+<div class="flex items-center gap-2 self-end md:self-auto">
+<button class="p-2 text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">app_settings_alt</span>
+</button>
+</div>
+</div>
+<!-- Main Data Table -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#1f2535] border-b border-border-muted">
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-400">ID</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-400">Employee</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-400">Email Address</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-400">Date Joined</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-400">Status</th>
+<th class="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-slate-400 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-muted">
+<!-- Row 1 -->
+<tr class="hover:bg-table-hover transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 font-mono text-xs text-slate-500">
+<span>7f2a...1b</span>
+<span class="material-symbols-outlined text-[14px] invisible group-hover:visible hover:text-primary transition-all">content_copy</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs" data-alt="Avatar for John Doe">JD</div>
+<div>
+<p class="text-sm font-semibold text-white">John Doe</p>
+<p class="text-[11px] text-slate-500">Senior Engineer</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">john.doe@company.com</td>
+<td class="px-6 py-4 text-sm text-slate-400">Jan 12, 2023</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider status-active">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-table-hover transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 font-mono text-xs text-slate-500">
+<span>3c9e...5f</span>
+<span class="material-symbols-outlined text-[14px] invisible group-hover:visible hover:text-primary transition-all">content_copy</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold text-xs" data-alt="Avatar for Jane Smith">JS</div>
+<div>
+<p class="text-sm font-semibold text-white">Jane Smith</p>
+<p class="text-[11px] text-slate-500">Product Manager</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">jane.smith@company.com</td>
+<td class="px-6 py-4 text-sm text-slate-400">Mar 05, 2022</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider status-active">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-table-hover transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 font-mono text-xs text-slate-500">
+<span>9d1b...8c</span>
+<span class="material-symbols-outlined text-[14px] invisible group-hover:visible hover:text-primary transition-all">content_copy</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-xs" data-alt="Avatar for Robert Brown">RB</div>
+<div>
+<p class="text-sm font-semibold text-white">Robert Brown</p>
+<p class="text-[11px] text-slate-500">HR Director</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">robert.b@company.com</td>
+<td class="px-6 py-4 text-sm text-slate-400">Jul 19, 2021</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider status-inactive">Inactive</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-table-hover transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 font-mono text-xs text-slate-500">
+<span>1f4e...2a</span>
+<span class="material-symbols-outlined text-[14px] invisible group-hover:visible hover:text-primary transition-all">content_copy</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 font-bold text-xs" data-alt="Avatar for Alice Wilson">AW</div>
+<div>
+<p class="text-sm font-semibold text-white">Alice Wilson</p>
+<p class="text-[11px] text-slate-500">UX Researcher</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">alice.w@company.com</td>
+<td class="px-6 py-4 text-sm text-slate-400">Nov 30, 2023</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider status-active">Active</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-table-hover transition-colors group cursor-pointer">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 font-mono text-xs text-slate-500">
+<span>5b6c...9d</span>
+<span class="material-symbols-outlined text-[14px] invisible group-hover:visible hover:text-primary transition-all">content_copy</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="size-9 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xs" data-alt="Avatar for Michael Scott">MS</div>
+<div>
+<p class="text-sm font-semibold text-white">Michael Scott</p>
+<p class="text-[11px] text-slate-500">Regional Manager</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-slate-400">m.scott@company.com</td>
+<td class="px-6 py-4 text-sm text-slate-400">Jun 01, 2020</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider status-inactive">Inactive</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-[#1f2535] border-t border-border-muted flex items-center justify-between">
+<p class="text-xs text-slate-500">Showing <span class="text-white font-medium">1-5</span> of <span class="text-white font-medium">1,248</span> employees</p>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-background-dark border border-border-muted text-slate-400 hover:text-white disabled:opacity-50 transition-all text-xs font-semibold" disabled="">Previous</button>
+<button class="size-8 rounded-lg bg-primary text-white text-xs font-bold">1</button>
+<button class="size-8 rounded-lg text-slate-400 hover:bg-[#2e2d34] text-xs font-bold transition-all">2</button>
+<button class="size-8 rounded-lg text-slate-400 hover:bg-[#2e2d34] text-xs font-bold transition-all">3</button>
+<span class="text-slate-600 px-1">...</span>
+<button class="size-8 rounded-lg text-slate-400 hover:bg-[#2e2d34] text-xs font-bold transition-all">250</button>
+<button class="px-3 py-1.5 rounded-lg bg-background-dark border border-border-muted text-slate-400 hover:text-white transition-all text-xs font-semibold">Next</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Subtle Footer for context -->
+<footer class="max-w-[1440px] mx-auto px-6 py-12 border-t border-border-muted mt-8">
+<div class="flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2 opacity-50">
+<span class="material-symbols-outlined text-lg">verified_user</span>
+<span class="text-xs font-medium tracking-tight">JWT Authentication Active • End-to-End Encrypted</span>
+</div>
+<div class="flex items-center gap-8 text-[11px] font-bold uppercase tracking-widest text-slate-500">
+<a class="hover:text-primary transition-colors" href="#">Documentation</a>
+<a class="hover:text-primary transition-colors" href="#">Support</a>
+<a class="hover:text-primary transition-colors" href="#">System Status</a>
+</div>
+</div>
+</footer>
+</body></html>

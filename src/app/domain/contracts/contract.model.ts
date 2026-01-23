@@ -15,3 +15,9 @@ export interface CreateContractDto {
   baseSalary: number;
   active?: boolean;
 }
+
+export interface UpdateContractDto {
+  contractType?: ContractType;
+  baseSalary?: number;
+  active?: boolean;
+}

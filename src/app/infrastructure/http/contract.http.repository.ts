@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiClient } from '../../core/http/api-client';
-import type { Contract, CreateContractDto } from '../../domain/contracts/contract.model';
+import type { Contract, CreateContractDto, UpdateContractDto } from '../../domain/contracts/contract.model';
 import type { ContractRepository } from '../../domain/contracts/contract.repository';
 
 @Injectable()
@@ -12,5 +12,8 @@ export class HttpContractRepository implements ContractRepository {
   }
   create(dto: CreateContractDto): Observable<Contract> {
     return this.api.post<Contract>('/contracts', dto);
+  }
+  update(id: string, dto: UpdateContractDto): Observable<Contract> {
+    return this.api.patch<Contract>(`/contracts/${id}`, dto);
   }
 }

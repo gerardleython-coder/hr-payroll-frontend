@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Payroll Processing and Breakdown</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#5a4ea6",
+                        "background-light": "#f8f8fc",
+                        "background-dark": "#0a0d14",
+                        "panel-dark": "#111827",
+                        "text-main": "#f9fafb",
+                        "text-muted": "#a7a5b1",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-text-main min-h-screen flex flex-col font-display">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-panel-dark px-6 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined block">payments</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight">HR PayStream</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Employees</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Contracts</a>
+<a class="text-sm font-medium text-primary" href="#">Payroll Runs</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Analytics</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<label class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-sm">search</span>
+<input class="w-64 pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/50" placeholder="Quick search..."/>
+</label>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-text-muted transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-9 rounded-full bg-cover bg-center border-2 border-primary/20" data-alt="User avatar profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC7j4aFkr_z8v1HEXjZmYHZOgj74erE8eJ1IDdt23S0B2_XojmydDV3ZOnWt4PXdC1DhuH6_RNzuLFKAUk5MOHhhA56P_PrQ8BEvGp9aunc2Oduee7EVhEK7HlhKqooY5UH6Pg3aIKjguze7ATOGjliPQ59JkNW3RSUxunGBl6YAvNxz18d0z6hlDqY1fCKpTFu2HgOrGn653yydj4fFmL5fCSkeK7QKQXrBqmvoV3UxQrJOPHz10LvIpucgTjyf4lHAebKJJdsX49z");'></div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-panel-dark hidden xl:flex flex-col p-4 gap-6">
+<div class="flex flex-col gap-1">
+<p class="px-3 text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2">Management</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-text-muted hover:text-white group" href="#">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/10 text-primary transition-all" href="#">
+<span class="material-symbols-outlined text-[20px] fill-1">calculate</span>
+<span class="text-sm font-semibold">Payroll Runs</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-text-muted hover:text-white group" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="text-sm font-medium">Employee Directory</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-text-muted hover:text-white group" href="#">
+<span class="material-symbols-outlined text-[20px]">description</span>
+<span class="text-sm font-medium">Tax Forms</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all text-text-muted hover:text-white group" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-6 lg:p-8">
+<div class="max-w-6xl mx-auto flex flex-col gap-8">
+<!-- Page Header & Breadcrumbs -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 text-sm font-medium text-text-muted">
+<a class="hover:text-primary" href="#">Payroll</a>
+<span>/</span>
+<span class="text-slate-900 dark:text-text-main">Run Processing</span>
+</div>
+<h1 class="text-3xl lg:text-4xl font-black tracking-tight">Run Breakdown</h1>
+<p class="text-text-muted">Configure and preview period calculations for <span class="text-primary font-semibold">October 2023</span></p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-panel-dark text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">
+<span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+                            Export Preview
+                        </button>
+<button class="flex items-center gap-2 px-6 py-2 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                            Finalize Run
+                        </button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Form Section: Configuration -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<div class="bg-white dark:bg-panel-dark p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+<h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">person_search</span>
+                                Process Parameters
+                            </h3>
+<div class="space-y-5">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-text-muted">Target Employee</label>
+<div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+<div class="size-10 rounded-full bg-cover bg-center" data-alt="Employee profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCBEO_zenhiffNMQ6XfxLl0TZ2zOKPLTC0rjNrRHEqF4VGIfnW_mBZm_p9RMaOTjuNDAdA-XIpOF5tjBBtUdhaap4-7t74cCcsL0m8Ykr1RxEVQ8NCErwxz4on58CW18sf5zuTZ-owBLRsyQ0uebauEvCiIyHQ1CriYaytLWN0oX-rX0v_C7d3XXku1vEZ2T423nKJq0eLEtongR1K1NoJ3bn22brP1P9_ny0kHRPXHV85MxrGy5YmL-hh6HkRa0k5y4pM5FWu2noFc");'></div>
+<div class="flex-1">
+<p class="text-sm font-bold">Alexander Wright</p>
+<p class="text-[11px] text-text-muted">Senior Software Engineer • Full-time</p>
+</div>
+<button class="text-primary text-xs font-bold hover:underline">Change</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-text-muted">Pay Period</label>
+<select class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl text-sm py-2.5 focus:ring-primary focus:border-primary">
+<option>Oct 1 - Oct 31, 2023</option>
+<option>Sep 1 - Sep 30, 2023</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-wider text-text-muted">Pay Frequency</label>
+<div class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm">Monthly</div>
+</div>
+</div>
+<div class="pt-4 space-y-3">
+<button class="w-full py-4 rounded-xl bg-primary text-white font-bold text-base shadow-lg shadow-primary/30 hover:opacity-90 active:scale-95 transition-all">
+                                        Calculate Payroll
+                                    </button>
+<p class="text-center text-[11px] text-text-muted">System will validate tax compliance before generating preview.</p>
+</div>
+</div>
+</div>
+<!-- Notification Example -->
+<div class="bg-emerald-500/10 border border-emerald-500/20 p-4 rounded-2xl flex items-start gap-3">
+<span class="material-symbols-outlined text-emerald-500">verified</span>
+<div>
+<p class="text-sm font-bold text-emerald-500">Calculation Successful</p>
+<p class="text-xs text-emerald-400/80">All statutory rules and deduction caps have been applied for this jurisdiction.</p>
+</div>
+</div>
+</div>
+<!-- Breakdown Section: Results -->
+<div class="lg:col-span-7 space-y-6">
+<!-- Net Pay Hero Card -->
+<div class="bg-primary p-8 rounded-3xl relative overflow-hidden shadow-2xl shadow-primary/40">
+<div class="absolute top-0 right-0 p-8 opacity-20 pointer-events-none">
+<span class="material-symbols-outlined text-[120px]">account_balance_wallet</span>
+</div>
+<div class="relative z-10 flex flex-col gap-1">
+<p class="text-primary-foreground/70 text-sm font-bold uppercase tracking-widest text-white/70">Calculated Net Pay</p>
+<div class="flex items-baseline gap-2">
+<h2 class="text-5xl font-black text-white tabular-nums">$4,821.50</h2>
+<span class="text-white/60 font-medium">USD</span>
+</div>
+<div class="mt-4 flex items-center gap-2">
+<span class="bg-white/20 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Verified</span>
+<p class="text-white/60 text-xs italic">Deposited via Direct Deposit (Chase ...8821)</p>
+</div>
+</div>
+</div>
+<!-- Details Grid (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Gross Pay -->
+<div class="bg-white dark:bg-panel-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+<h4 class="text-sm font-bold text-text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-slate-400">add_circle</span>
+                                    Gross Pay
+                                </h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+<span class="text-sm">Base Salary</span>
+<span class="text-sm font-semibold tabular-nums">$6,250.00</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+<span class="text-sm">Overtime (4.5h)</span>
+<span class="text-sm font-semibold tabular-nums">$312.40</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<span class="text-sm">Bonus (Performance)</span>
+<span class="text-sm font-semibold tabular-nums text-emerald-500">+$250.00</span>
+</div>
+<div class="pt-4 flex justify-between items-center border-t-2 border-slate-100 dark:border-slate-800">
+<span class="text-sm font-bold">Total Gross</span>
+<span class="text-base font-bold tabular-nums">$6,812.40</span>
+</div>
+</div>
+</div>
+<!-- Deductions -->
+<div class="bg-white dark:bg-panel-dark p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+<h4 class="text-sm font-bold text-text-muted uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-rose-400">do_not_disturb_on</span>
+                                    Deductions
+                                </h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+<span class="text-sm">Income Tax (FIT)</span>
+<span class="text-sm font-semibold tabular-nums">($1,226.23)</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+<span class="text-sm">Social Security</span>
+<span class="text-sm font-semibold tabular-nums">($422.37)</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-800">
+<span class="text-sm">Health Insurance</span>
+<span class="text-sm font-semibold tabular-nums">($180.00)</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<span class="text-sm">Pension (401k)</span>
+<span class="text-sm font-semibold tabular-nums">($162.30)</span>
+</div>
+<div class="pt-4 flex justify-between items-center border-t-2 border-slate-100 dark:border-slate-800">
+<span class="text-sm font-bold">Total Deductions</span>
+<span class="text-base font-bold tabular-nums text-rose-500">-$1,990.90</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Employer Contributions (Subtle) -->
+<div class="bg-slate-100 dark:bg-slate-900/40 p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 border border-slate-200 dark:border-slate-800/50">
+<div class="flex items-center gap-3">
+<div class="p-2 rounded-lg bg-white dark:bg-slate-800">
+<span class="material-symbols-outlined text-slate-400 text-lg">corporate_fare</span>
+</div>
+<div>
+<p class="text-xs font-bold uppercase tracking-widest text-text-muted">Employer Liability</p>
+<p class="text-sm text-slate-500">Additional taxes &amp; benefits paid by company</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xl font-bold tabular-nums">$842.15</p>
+<button class="text-[10px] font-bold text-primary uppercase hover:underline">View Breakdown</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Toast Notification Overlay -->
+<div class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none">
+<div class="flex items-center gap-4 bg-slate-900 text-white p-4 rounded-xl shadow-2xl border border-white/10 w-80 animate-bounce-subtle pointer-events-auto">
+<div class="size-10 rounded-full bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold leading-tight">Payslip Generated</p>
+<p class="text-[11px] text-white/60">Draft for Alexander W. is ready for review.</p>
+</div>
+<button class="text-white/40 hover:text-white">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</div>
+</body></html>

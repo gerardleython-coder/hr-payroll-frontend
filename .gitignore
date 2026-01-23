@@ -83,6 +83,14 @@ Desktop.ini
 *.cache
 
 # =========================
+# Documentation (optional)
+# =========================
+LOGIN_IMPLEMENTATION.md
+MEJORAS_IMPLEMENTADAS.md
+STITCH_PROMPT.md
+docs/design/
+
+# =========================
 # Optional: lockfiles (elige el que uses)
 # =========================
 # If you use npm, keep package-lock.json committed (recommended)

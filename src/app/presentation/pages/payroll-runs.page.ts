@@ -11,6 +11,7 @@ import { ListEmployeesUseCase } from '../../application/employees/list-employees
 import { ListContractsUseCase } from '../../application/contracts/list-contracts.usecase';
 import { CreatePayrollRunUseCase } from '../../application/payroll/create-payroll-run.usecase';
 import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-runs.usecase';
+import { DownloadPayrollPdfUseCase } from '../../application/payroll/download-payroll-pdf.usecase';
 
 @Component({
   standalone: true,
@@ -18,7 +19,7 @@ import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-r
   template: `
   <div class="row">
     <div class="col card">
-      <h2>Crear corrida de nómina (PayrollRun)</h2>
+      <h2>Crear Nómina</h2>
 
       <form [formGroup]="form" (ngSubmit)="createRun()">
         <label for="pr-employeeId">Empleado</label>
@@ -27,25 +28,25 @@ import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-r
           <option *ngFor="let e of employees()" [value]="e.id">{{ e.name }} ({{ e.email }})</option>
         </select>
 
-        <label for="pr-period">Periodo (YYYY-MM)</label>
+        <label for="pr-period">Período (YYYY-MM)</label>
         <input id="pr-period" formControlName="period" placeholder="2026-01">
 
         <label for="pr-contractId">Contrato (opcional)</label>
         <select id="pr-contractId" formControlName="contractId">
           <option value="">-- Auto: contrato activo más reciente --</option>
           <option *ngFor="let c of contractsForSelectedEmployee()" [value]="c.id">
-            {{ c.contractType }} — {{ c.baseSalary | number }} — {{ c.active ? 'activo' : 'inactivo' }}
+            {{ c.contractType === 'EMPLOYEE' ? 'EMPLEADO' : 'CONTRATISTA' }} — {{ c.baseSalary | number }} — {{ c.active ? 'activo' : 'inactivo' }}
           </option>
         </select>
 
         <label for="pr-bonuses">Bonos (opcional)</label>
         <input id="pr-bonuses" type="number" formControlName="bonuses" placeholder="0">
 
-        <label for="pr-otherDeductions">Otras deducciones (opcional)</label>
+        <label for="pr-otherDeductions">Otras Deducciones (opcional)</label>
         <input id="pr-otherDeductions" type="number" formControlName="otherDeductions" placeholder="0">
 
         <div class="actions">
-          <button type="submit" [disabled]="form.invalid || busy()">Crear corrida</button>
+          <button type="submit" [disabled]="form.invalid || busy()">Calcular Nómina</button>
           <span class="small" *ngIf="busy()">Procesando...</span>
         </div>
       </form>
@@ -53,35 +54,35 @@ import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-r
       <div class="err" *ngIf="error()">{{ error() }}</div>
 
       <div *ngIf="lastCreated() as r" style="margin-top:14px;">
-        <div class="small">Última corrida creada:</div>
+        <div class="small">Última nómina creada:</div>
         <div class="row" style="margin-top:10px;">
           <div class="col card" style="padding:12px;">
-            <div><b>Periodo:</b> {{ r.period }}</div>
-            <div><b>Gross:</b> {{ r.gross | number }}</div>
-            <div><b>Net:</b> {{ r.net | number }}</div>
-            <div class="small">Id: {{ r.id }}</div>
+            <div><b>Período:</b> {{ r.period }}</div>
+            <div><b>Salario Bruto:</b> {{ r.gross | number }}</div>
+            <div><b>Salario Neto:</b> {{ r.net | number }}</div>
+            <div class="small">ID: {{ r.id }}</div>
           </div>
         </div>
-        <pre class="pre-wrap">{{ r.breakdown | json }}</pre>
+        <pre class="pre-wrap">{{ formatBreakdown(r.breakdown) }}</pre>
       </div>
     </div>
 
     <div class="col card">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <h2>Histórico de corridas</h2>
-        <button type="button" (click)="loadRuns()">Refrescar</button>
+        <h2>Histórico de Nóminas</h2>
+        <button type="button" class="btn-secondary" (click)="loadRuns()">Actualizar</button>
       </div>
 
       <div class="row" style="margin-top:8px;">
         <div class="col" style="flex:1 1 260px;">
-          <label for="filter-employee">Filtro empleado</label>
+          <label for="filter-employee">Filtrar por Empleado</label>
           <select id="filter-employee" [value]="filters().employeeId ?? ''" (change)="setEmployeeFilter($any($event.target).value)">
             <option value="">-- Todos --</option>
             <option *ngFor="let e of employees()" [value]="e.id">{{ e.name }}</option>
           </select>
         </div>
         <div class="col" style="flex:1 1 220px;">
-          <label for="filter-period">Filtro periodo</label>
+          <label for="filter-period">Filtrar por Período</label>
           <input id="filter-period" [value]="filters().period ?? ''" (input)="setPeriodFilter($any($event.target).value)" placeholder="2026-01">
         </div>
         <div class="col" style="flex:0 0 160px; align-self:end;">
@@ -95,11 +96,12 @@ import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-r
             <thead>
               <tr>
                 <th>Empleado</th>
-                <th>Periodo</th>
-                <th>Gross</th>
-                <th>Net</th>
-                <th>Creado</th>
-                <th>Breakdown</th>
+                <th>Período</th>
+                <th>Salario Bruto</th>
+                <th>Salario Neto</th>
+                <th>Fecha de Creación</th>
+                <th>Desglose</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -115,8 +117,18 @@ import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-r
                 <td>
                   <details>
                     <summary class="small">ver</summary>
-                    <pre class="pre-wrap">{{ r.breakdown | json }}</pre>
+                    <pre class="pre-wrap">{{ formatBreakdown(r.breakdown) }}</pre>
                   </details>
+                </td>
+                <td>
+                  <button 
+                    type="button" 
+                    class="btn-secondary" 
+                    (click)="downloadPdf(r)" 
+                    [disabled]="downloadingId() === r.id"
+                    style="padding: 6px 12px; font-size: 12px;">
+                    {{ downloadingId() === r.id ? 'Descargando...' : 'Descargar PDF' }}
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -125,7 +137,7 @@ import { ListPayrollRunsUseCase } from '../../application/payroll/list-payroll-r
       </ng-container>
 
       <ng-template #empty>
-        <div class="small">Aún no hay corridas.</div>
+        <div class="small">Aún no hay nóminas.</div>
       </ng-template>
     </div>
   </div>
@@ -139,6 +151,7 @@ export class PayrollRunsPage implements OnInit {
 
   error = signal<string | null>(null);
   busy = signal(false);
+  downloadingId = signal<string | null>(null);
 
   filters = signal<{ employeeId?: string; period?: string }>({});
 
@@ -149,6 +162,7 @@ export class PayrollRunsPage implements OnInit {
   private readonly listContracts = inject(ListContractsUseCase);
   private readonly createRunUc = inject(CreatePayrollRunUseCase);
   private readonly listRunsUc = inject(ListPayrollRunsUseCase);
+  private readonly downloadPdfUc = inject(DownloadPayrollPdfUseCase);
 
   ngOnInit(): void {
     this.form = this.fb.nonNullable.group({
@@ -225,6 +239,69 @@ export class PayrollRunsPage implements OnInit {
       error: (e) => {
         this.busy.set(false);
         this.error.set(String(e?.message ?? e));
+      },
+    });
+  }
+
+  formatBreakdown(breakdown: any): string {
+    if (!breakdown) return '';
+    
+    const translations: Record<string, string> = {
+      'baseSalary': 'Salario Base',
+      'bonuses': 'Bonos',
+      'gross': 'Salario Bruto',
+      'health': 'Salud',
+      'pension': 'Pensión',
+      'withholding': 'Retención',
+      'taxes': 'Impuestos',
+      'mandatoryDeductions': 'Deducciones Obligatorias',
+      'otherDeductions': 'Otras Deducciones',
+      'net': 'Salario Neto'
+    };
+
+    // Ordenar los campos en el orden correcto
+    const order = ['baseSalary', 'bonuses', 'gross', 'health', 'pension', 'withholding', 'taxes', 'mandatoryDeductions', 'otherDeductions', 'net'];
+    
+    const translated: Record<string, any> = {};
+    for (const key of order) {
+      if (breakdown[key] !== undefined) {
+        const translatedKey = translations[key] || key;
+        translated[translatedKey] = breakdown[key];
+      }
+    }
+
+    return JSON.stringify(translated, null, 2);
+  }
+
+  downloadPdf(run: PayrollRun): void {
+    this.downloadingId.set(run.id);
+    this.error.set(null);
+
+    this.downloadPdfUc.execute(run.id).subscribe({
+      next: (blob) => {
+        // Crear un enlace temporal para descargar el archivo
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        // Generar nombre de archivo descriptivo
+        const employeeName = run.employee?.name || 'empleado';
+        const sanitizedName = employeeName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+        link.download = `nomina-${run.period}-${sanitizedName}.pdf`;
+        
+        // Simular click para descargar
+        document.body.appendChild(link);
+        link.click();
+        
+        // Limpiar
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        
+        this.downloadingId.set(null);
+      },
+      error: (e) => {
+        this.downloadingId.set(null);
+        this.error.set(`Error al descargar PDF: ${String(e?.message ?? e)}`);
       },
     });
   }

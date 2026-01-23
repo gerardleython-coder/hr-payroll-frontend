@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NgIf, NgFor, DatePipe, DecimalPipe } from '@angular/common';
@@ -17,26 +16,26 @@ import { DeletePayrollRuleUseCase } from '../../application/payroll/delete-payro
   template: `
   <div class="row">
     <div class="col card">
-      <h2>Crear regla de nómina</h2>
+      <h2>Crear Regla de Nómina</h2>
 
       <form [formGroup]="createForm" (ngSubmit)="create()">
-        <label for="pr-key">Key</label>
+        <label for="pr-key">Clave</label>
         <input id="pr-key" formControlName="key" placeholder="Ej: employee.healthPct">
 
-        <label for="pr-label">Label</label>
+        <label for="pr-label">Etiqueta</label>
         <input id="pr-label" formControlName="label" placeholder="Ej: Salud empleado">
 
-        <label for="pr-contractType">ContractType (opcional)</label>
+        <label for="pr-contractType">Tipo de Contrato (opcional)</label>
         <select id="pr-contractType" formControlName="contractType">
-          <option value="">-- aplica a todos --</option>
-          <option value="EMPLOYEE">EMPLOYEE</option>
-          <option value="CONTRACTOR">CONTRACTOR</option>
+          <option value="">-- Aplica a todos --</option>
+          <option value="EMPLOYEE">EMPLEADO</option>
+          <option value="CONTRACTOR">CONTRATISTA</option>
         </select>
 
-        <label for="pr-unit">Unit</label>
-        <input id="pr-unit" formControlName="unit" placeholder="Ej: pct | cop | flat">
+        <label for="pr-unit">Unidad</label>
+        <input id="pr-unit" formControlName="unit" placeholder="Ej: PERCENT | AMOUNT">
 
-        <label for="pr-value">Value</label>
+        <label for="pr-value">Valor</label>
         <input id="pr-value" type="number" formControlName="value" placeholder="Ej: 0.04">
 
         <div class="actions">
@@ -51,16 +50,16 @@ import { DeletePayrollRuleUseCase } from '../../application/payroll/delete-payro
     <div class="col card">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
         <h2>Reglas</h2>
-        <button type="button" (click)="load()">Refrescar</button>
+        <button type="button" class="btn-secondary" (click)="load()">Actualizar</button>
       </div>
 
       <div class="row" style="margin-top:8px;">
         <div class="col" style="flex:1 1 260px;">
-          <label for="filter-contractType">Filtro ContractType</label>
+          <label for="filter-contractType">Filtrar por Tipo de Contrato</label>
           <select id="filter-contractType" [value]="filterContractType() ?? ''" (change)="setFilter($any($event.target).value)">
             <option value="">-- Todas --</option>
-            <option value="EMPLOYEE">EMPLOYEE</option>
-            <option value="CONTRACTOR">CONTRACTOR</option>
+            <option value="EMPLOYEE">EMPLEADO</option>
+            <option value="CONTRACTOR">CONTRATISTA</option>
           </select>
         </div>
         <div class="col" style="flex:0 0 160px; align-self:end;">
@@ -73,12 +72,12 @@ import { DeletePayrollRuleUseCase } from '../../application/payroll/delete-payro
           <table>
             <thead>
               <tr>
-                <th>Key</th>
-                <th>Label</th>
-                <th>Type</th>
-                <th>Unit</th>
-                <th>Value</th>
-                <th>Enabled</th>
+                <th>Clave</th>
+                <th>Etiqueta</th>
+                <th>Tipo</th>
+                <th>Unidad</th>
+                <th>Valor</th>
+                <th>Habilitado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -87,7 +86,7 @@ import { DeletePayrollRuleUseCase } from '../../application/payroll/delete-payro
               <tr *ngFor="let r of rules()">
                 <td><span class="small mono wrap-anywhere">{{ r.key }}</span></td>
             <td>{{ r.label }}</td>
-            <td><span class="pill">{{ r.contractType ?? 'ALL' }}</span></td>
+            <td><span class="pill">{{ r.contractType === 'EMPLOYEE' ? 'EMPLEADO' : r.contractType === 'CONTRACTOR' ? 'CONTRATISTA' : 'TODOS' }}</span></td>
             <td><span class="pill">{{ r.unit }}</span></td>
             <td>{{ r.value }}</td>
             <td>
@@ -96,7 +95,7 @@ import { DeletePayrollRuleUseCase } from '../../application/payroll/delete-payro
               </span>
             </td>
                 <td style="white-space:nowrap;">
-                  <button type="button" (click)="startEdit(r)">Editar</button>
+                  <button type="button" class="btn-secondary" (click)="startEdit(r)">Editar</button>
                   <button type="button" class="danger" (click)="remove(r)">Eliminar</button>
                 </td>
               </tr>
@@ -112,37 +111,37 @@ import { DeletePayrollRuleUseCase } from '../../application/payroll/delete-payro
   </div>
 
   <div class="card" *ngIf="editing() as r" style="margin-top:14px;">
-    <h2>Editar regla</h2>
+    <h2>Editar Regla</h2>
 
     <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
       <div class="row">
         <div class="col">
-          <label for="edit-label">Label</label>
+          <label for="edit-label">Etiqueta</label>
           <input id="edit-label" formControlName="label">
         </div>
         <div class="col">
-          <label for="edit-unit">Unit</label>
+          <label for="edit-unit">Unidad</label>
           <input id="edit-unit" formControlName="unit">
         </div>
         <div class="col">
-          <label for="edit-value">Value</label>
+          <label for="edit-value">Valor</label>
           <input id="edit-value" type="number" formControlName="value">
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <label for="edit-contractType">ContractType</label>
+          <label for="edit-contractType">Tipo de Contrato</label>
           <select id="edit-contractType" formControlName="contractType">
-            <option value="">-- ALL --</option>
-            <option value="EMPLOYEE">EMPLOYEE</option>
-            <option value="CONTRACTOR">CONTRACTOR</option>
+            <option value="">-- TODOS --</option>
+            <option value="EMPLOYEE">EMPLEADO</option>
+            <option value="CONTRACTOR">CONTRATISTA</option>
           </select>
         </div>
         <div class="col" style="display:flex; align-items:end;">
           <label style="display:flex; align-items:center; gap:10px; margin:0;">
             <input type="checkbox" formControlName="enabled" style="width:auto">
-            <span>Enabled</span>
+            <span>Habilitado</span>
           </label>
         </div>
       </div>
