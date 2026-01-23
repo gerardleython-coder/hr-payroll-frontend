@@ -247,20 +247,27 @@ export class PayrollRunsPage implements OnInit {
     if (!breakdown) return '';
     
     const translations: Record<string, string> = {
-      'net': 'Salario Neto',
+      'baseSalary': 'Salario Base',
+      'bonuses': 'Bonos',
       'gross': 'Salario Bruto',
-      'taxes': 'Impuestos',
       'health': 'Salud',
       'pension': 'Pensión',
       'withholding': 'Retención',
+      'taxes': 'Impuestos',
+      'mandatoryDeductions': 'Deducciones Obligatorias',
       'otherDeductions': 'Otras Deducciones',
-      'mandatoryDeductions': 'Deducciones Obligatorias'
+      'net': 'Salario Neto'
     };
 
+    // Ordenar los campos en el orden correcto
+    const order = ['baseSalary', 'bonuses', 'gross', 'health', 'pension', 'withholding', 'taxes', 'mandatoryDeductions', 'otherDeductions', 'net'];
+    
     const translated: Record<string, any> = {};
-    for (const [key, value] of Object.entries(breakdown)) {
-      const translatedKey = translations[key] || key;
-      translated[translatedKey] = value;
+    for (const key of order) {
+      if (breakdown[key] !== undefined) {
+        const translatedKey = translations[key] || key;
+        translated[translatedKey] = breakdown[key];
+      }
     }
 
     return JSON.stringify(translated, null, 2);

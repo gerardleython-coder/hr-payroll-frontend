@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Component, signal, inject } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { CheckHealthUseCase } from '../../application/health/check-health.usecase';

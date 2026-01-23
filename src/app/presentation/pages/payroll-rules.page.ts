@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Component, signal, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NgIf, NgFor, DatePipe, DecimalPipe } from '@angular/common';
